@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indian Cultural Heritage Chatbot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Times New Roman", Times, serif;
+        }
+        
+        body {
+            background: linear-gradient(to bottom, #f8f4e9, #f2ebd3);
+            color: #3c2a1e;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(to right, #a83a4a, #c24d60);
+            color: #fff;
+            padding: 1.2rem;
+            text-align: center;
+            border-bottom: 5px solid #c19b35;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .header h1 {
+            font-size: 2.3rem;
+            letter-spacing: 1.5px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: row; /* Changed to row for side-by-side layout */
+            flex-grow: 1; 
+            overflow: hidden;
+            gap: 1rem; /* Gap between info panel and chat */
+        }
+        
+        .chat-container {
+            background-color: #fff;
+            border-radius: 0; /* Square corners */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%; /* Takes full height of its flex parent (.container) */
+            margin-bottom: 0; 
+            border: 2px solid #c19b35;
+            flex-grow: 1; /* Allows it to take available space */
+        }
+        
+        .chat-header {
+            background: linear-gradient(to right, #a83a4a, #c24d60);
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .chat-messages {
+            flex-grow: 1;
+            padding: 1rem; /* Slightly reduced padding for more chat space */
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem; /* Slightly reduced gap between messages */
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23a83a4a' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+            max-height: none; /* Allow chat messages to take full height */
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 1rem;
+            border-radius: 0; /* Square corners */
+            line-height: 1.5;
+            position: relative;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .user-message {
+            background-color: #f0e6d9;
+            align-self: flex-end;
+            border: 1px solid #d6c5ab;
+            border-bottom-right-radius: 0; /* Ensure bottom-right is square */
+        }
+        
+        .bot-message {
+            background-color: #f5f0e5;
+            align-self: flex-start;
+            border: 1px solid #e8dfca;
+            border-bottom-left-radius: 0; /* Ensure bottom-left is square */
+        }
+        
+        .message-header {
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+            font-size: 1.1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: 0.8rem 1rem; /* Reduced vertical padding */
+            background-color: #f5f0e5;
+            border-top: 2px solid #c19b35;
+        }
+        
+        .chat-input input {
+            flex-grow: 1;
+            padding: 0.6rem 1rem; /* Reduced padding */
+            border: 1px solid #c19b35;
+            border-radius: 0; /* Square corners */
+            font-size: 1rem;
+            outline: none;
+            background-color: #fff;
+            color: #3c2a1e;
+        }
+        
+        .chat-input button {
+            background: linear-gradient(to bottom, #a83a4a, #8a2c3b);
+            color: #fff;
+            border: none;
+            border-radius: 0; /* Square corners */
+            padding: 0.6rem 1.2rem; /* Reduced padding */
+            margin-left: 0.8rem; /* Reduced margin */
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .chat-input button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem; /* Reduced gap between suggestions */
+            padding: 0.5rem 1rem; /* Reduced padding */
+            background-color: #f5f0e5;
+            border-top: 1px solid #d6c5ab;
+            margin-top: 0.5rem; /* Adjusted margin-top to lower it */
+        }
+        
+        .suggestion {
+            background: linear-gradient(to bottom, #fff, #f0e6d9);
+            border: 1px solid #a83a4a;
+            border-radius: 0; /* Square corners */
+            padding: 0.4rem 0.8rem; /* Reduced padding for smaller buttons */
+            cursor: pointer;
+            font-size: 0.85rem; /* Slightly smaller font */
+            transition: all 0.2s;
+        }
+        
+        .suggestion:hover {
+            background: linear-gradient(to bottom, #f0e6d9, #e2d4c0);
+            transform: translateY(-2px);
+        }
+        
+        /* Re-added .info-panel styles */
+        .info-panel {
+            background-color: #fff;
+            border-radius: 0; /* Square corners */
+            padding: 0.8rem; /* Reduced padding */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            border: 2px solid #c19b35;
+            margin-bottom: 0;
+            width: 200px; /* Reduced width for the info panel */
+            flex-shrink: 0; /* Prevent it from shrinking */
+            overflow-y: auto; /* Allow scrolling if content overflows vertically */
+        }
+        
+        .info-panel h2 {
+            color: #a83a4a;
+            margin-bottom: 0.5rem; /* Reduced margin */
+            text-align: center;
+            font-size: 1.2rem; /* Reduced font size */
+        }
+        
+        .info-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem; /* Reduced gap */
+            justify-content: center;
+        }
+        
+        .info-card {
+            background-color: #f9f5e9;
+            border: 1px solid #d6c5ab;
+            border-radius: 0; /* Square corners */
+            padding: 0.6rem; /* Reduced padding */
+            width: 100%; /* Take full width of info panel */
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        
+        .info-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .info-card h3 {
+            color: #a83a4a;
+            margin-bottom: 0.3rem; /* Reduced margin */
+            font-size: 1rem; /* Reduced font size */
+            border-bottom: 2px solid #c19b35;
+            padding-bottom: 0.2rem; /* Reduced padding */
+            display: flex;
+            align-items: center;
+            gap: 5px; /* Reduced gap */
+        }
+        
+        .info-card p {
+            font-size: 0.8rem; /* Reduced font size */
+            line-height: 1.3; /* Adjusted line height */
+        }
+        
+        .footer {
+            background: linear-gradient(to right, #a83a4a, #8a2c3b);
+            color: #fff;
+            text-align: center;
+            padding: 1rem;
+            margin-top: auto;
+            font-size: 0.9rem;
+        }
+        
+        .typing-indicator {
+            display: none;
+            padding: 10px;
+            background-color: #f5f0e5;
+            align-self: flex-start;
+            border-radius: 0; /* Square corners */
+            margin-bottom: 10px;
+        }
+        
+        .typing-dots {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #a83a4a;
+            border-radius: 50%; /* Keep dots round */
+            animation: typingAnimation 1.4s infinite ease-in-out;
+        }
+        
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes typingAnimation {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column; /* Stack vertically on small screens */
+                padding: 1rem;
+                gap: 0.8rem;
+            }
+
+            .info-panel {
+                width: 100%; /* Full width on small screens */
+                max-height: 150px; /* Limit height to prevent it from taking too much space */
+            }
+            
+            .info-card {
+                width: calc(50% - 0.5rem); /* Two cards per row on small screens */
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .info-panel h2 {
+                font-size: 1.2rem;
+            }
+            
+            .info-card h3 {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Indian Cultural Heritage Chatbot</h1>
+    </div>
+    
+    <div class="container">
+        <div class="info-panel">
+            <h2>Explore Indian Cultural Heritage</h2>
+            <div class="info-content">
+                <div class="info-card">
+                    <h3><i class="fas fa-book"></i> Literature & Texts</h3>
+                    <p>Explore Vedas, Upanishads, Epics, Classical Sanskrit literature, and regional literary masterpieces.</p>
+                </div>
+                <div class="info-card">
+                    <h3><i class="fas fa-landmark"></i> Arts & Architecture</h3>
+                    <p>Discover temple architecture, classical dance forms, music traditions, and visual arts.</p>
+                </div>
+                <div class="info-card">
+                    <h3><i class="fas fa-globe-asia"></i> Regional Diversity</h3>
+                    <p>Learn about the unique cultural traditions across India's states and linguistic regions.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chat-container">
+            <div class="chat-header">
+                <i class="fas fa-robot"></i> Indian Cultural Expert
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                <div class="message bot-message">
+                    <div class="message-header"><i class="fas fa-robot"></i> Cultural Expert</div>
+                    <div>Welcome! I am a specialized chatbot focused on Indian cultural heritage. I can provide detailed information about literature, arts, traditions, languages, and historical aspects of India's diverse cultures. How may I assist you today?</div>
+                </div>
+            </div>
+            <div class="typing-indicator" id="typing-indicator">
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="user-input" placeholder="Ask about Indian culture, literature, or traditions...">
+                <button id="send-button"><i class="fas fa-paper-plane"></i> Send</button>
+            </div>
+            <div class="suggestions">
+                <div class="suggestion" data-query="Tell me about Sanskrit literature">Sanskrit Literature</div>
+                <div class="suggestion" data-query="Explain classical Indian dance forms">Classical Dance</div>
+                <div class="suggestion" data-query="What are the major Indian festivals?">Indian Festivals</div>
+                <div class="suggestion" data-query="Tell me about Hindi language">Hindi Language</div>
+                <div class="suggestion" data-query="Tell me about Thakazhi Sivasankara Pillai">Thakazhi</div>
+                <div class="suggestion" data-query="Tell me about Vaikom Muhammad Basheer">Basheer</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>Indian Cultural Heritage Chatbot</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatMessages = document.getElementById('chat-messages');
+            const userInput = document.getElementById('user-input');
+            const sendButton = document.getElementById('send-button');
+            const suggestions = document.querySelectorAll('.suggestion');
+            const typingIndicator = document.getElementById('typing-indicator');
+            
+            // Comprehensive knowledge base for Indian culture
+            const knowledgeBase = {
+                greeting: [
+                    "Namaste! How can I assist you with Indian cultural heritage today?",
+                    "Greetings! I'm here to help you explore the rich tapestry of Indian culture.",
+                    "Welcome! As an expert on Indian culture, I'm ready to answer your questions."
+                ],
+                
+                // Literature and texts
+                literature: {
+                    sanskrit: "Sanskrit literature encompasses a rich tradition spanning over 3,000 years. Major works include the Vedas (Rigveda, Yajurveda, Samaveda, Atharvaveda), Upanishads, great epics like Mahabharata and Ramayana, and classical works by Kalidasa (Abhijnanasakuntalam, Meghaduta), Bhasa, and Bhavabhuti. Sanskrit also has extensive philosophical literature including texts from six orthodox schools of Hindu philosophy.",
+                    tamil: "Tamil literature has a history of over 2,000 years, beginning with the Sangam literature (300 BCE - 300 CE) which includes works like Tolkappiyam, Ettuthokai, and Pattupattu. Later masterpieces include the Thirukkural by Thiruvalluvar, Silappatikaram, and Manimekalai. Tamil has a rich devotional literature tradition with the works of Alwars and Nayanars.",
+                    hindi: "Modern Hindi literature emerged in the 19th century with Bharatendu Harishchandra. The Chhayavad movement featured poets like Jaishankar Prasad, Suryakant Tripathi 'Nirala', and Mahadevi Varma. Prominent novelists include Premchand, Jainendra Kumar, and Yashpal. Contemporary Hindi literature continues to flourish with diverse voices.",
+                    bengali: "Bengali literature boasts Nobel laureate Rabindranath Tagore, whose works include Gitanjali, Gora, and Ghare-Baire. Other luminaries include Bankim Chandra Chattopadhyay (Anandamath), Sarat Chandra Chattopadhyay, and Kazi Nazrul Islam. The Kallol movement modernized Bengali literature in the early 20th century.",
+                    regional: "India's regional literatures are incredibly diverse: Malayalam has luminaries like Thakazhi Sivasankara Pillai and Vaikom Muhammad Basheer; Kannada literature includes works by Kuvempu and U.R. Ananthamurthy; Marathi literature features saints like Dnyaneshwar and Tukaram alongside modern writers; Telugu literature has classical works and modern innovators; Punjabi literature includes the Sikh Gurus' writings and Waris Shah's Heer Ranjha."
+                },
+                
+                // Arts and performance - Enhanced with detailed information
+                arts: {
+                    dance: {
+                        overview: "India has eight classical dance forms recognized by the Sangeet Natak Akademi: Bharatanatyam (Tamil Nadu), Kathak (North India), Kathakali (Kerala), Kuchipudi (Andhra Pradesh), Odissi (Odisha), Manipuri (Manipur), Mohiniyattam (Kerala), and Sattriya (Assam). Each has distinct costumes, gestures (mudras), and musical accompaniment, often depicting mythological stories.",
+                        bharatanatyam: "Bharatanatyam originates from Tamil Nadu and is one of the oldest classical dance forms. It was traditionally performed by Devadasis in temples. The dance is characterized by fixed upper torso, bent legs, and sophisticated footwork. It includes elements of nritta (pure dance), nritya (expressive dance), and natya (dramatic storytelling). Key aspects include elaborate hand gestures (hastas), facial expressions (abhinaya), and rhythmic patterns. Famous exponents: Rukmini Devi Arundale, Balasaraswati, Yamini Krishnamurthy.",
+                        kathak: "Kathak derives from the Sanskrit word 'katha' meaning story. It originated from North India and was influenced by both Hindu and Muslim cultures. It features intricate footwork, rapid spins (chakkars), and expressive gestures. The dance includes both abstract technical pieces (nritta) and expressive storytelling (abhinaya). Ghungroos (ankle bells) are worn to accentuate rhythmic patterns. Famous exponents: Birju Maharaj, Sitara Devi, Shovana Narayan.",
+                        kathakali: "Kathakali comes from Kerala and is known for its elaborate makeup, costumes, and facial masks. It combines dance, drama, music, and ritual. Performances are based on Hindu epics and Puranas. The dance uses detailed mudras (hand gestures) and facial expressions to convey stories. Training is rigorous and begins in childhood. Famous exponents: Kalamandalam Krishnan Nair, Kottakkal Sivaraman, Kalamandalam Ramankutty Nair.",
+                        kuchipudi: "Kuchipudi originated in Andhra Pradesh and was traditionally performed by men, even for female roles. It combines fast footwork, dramatic expression, and graceful movements. Unique elements include dancing on the rim of a brass plate and balancing a pot of water on the head. Tarangam is a famous item where dancers perform on the edges of a brass plate. Famous exponents: Vempati Chinna Satyam, Yamini Reddy, Raja and Radha Reddy.",
+                        odissi: "Odissi from Odisha is characterized by fluid torso movements (tribhanga posture) and intricate footwork. It has sculpturesque poses inspired by temple sculptures. The dance includes both tandava (vigorous) and lasya (graceful) elements. Mangalacharan is the invocatory item, followed by Batu Nritya, Pallavi, and abhinaya items. Famous exponents: Kelucharan Mohapatra, Sanjukta Panigrahi, Sonal Mansingh.",
+                        manipuri: "Manipuri dance from Manipur is known for its graceful, fluid movements and spiritual themes. It often depicts stories of Radha and Krishna (Raas Leela). The dance is characterized by smooth, gentle movements with no sharp jerks. Costumes are elaborate with traditional motifs. Pung cholom (drum dance) is a vigorous male dance form. Famous exponents: Guru Bipin Singh, Darshana Jhaveri, Singhajit Singh.",
+                        mohiniyattam: "Mohiniyattam from Kerala is a solo female dance known for its graceful, swaying movements. The name means 'dance of the enchantress'. It features circular movements, gentle footwork, and expressive eye movements. The dance often themes around love and devotion. Costumes are typically white or off-white with gold border. Famous exponents: Kalamandalam Kalyanikutty Amma, Sunanda Nair, Kalamandalam Sugandhi.",
+                        sattriya: "Sattriya from Assam was developed in Vaishnavite monasteries (sattras) by Saint Sankardeva. It was traditionally performed by male monks. The dance includes both nritta (pure dance) and nritya (expressive dance). Themes are usually from Hindu epics and Vaishnavite traditions. Costumes are white or raw silk with traditional Assamese motifs. Famous exponents: Guru Jatin Goswami, Sharodi Saikia, Anita Sharma."
+                    },
+                    music: {
+                        overview: "Indian classical music has two main traditions: Hindustani (North India) and Carnatic (South India). Both use ragas (melodic frameworks) and talas (rhythmic cycles).",
+                        hindustani: "Hindustani music evolved from ancient traditions, influenced by Persian elements. It features improvisation within the framework of raga and tala. Major forms include Dhrupad, Khayal, Thumri, and Tappa. Instruments include sitar, sarod, tabla, santoor, and flute. The gharana system represents different stylistic traditions. Famous artists: Ravi Shankar, Bismillah Khan, Zakir Hussain, Kishori Amonkar.",
+                        carnatic: "Carnatic music is more rhythmically intensive and composition-based. It places greater emphasis on fixed compositions (kritis). Major forms include Varnam, Kriti, Ragam-Tanam-Pallavi. Instruments include veena, mridangam, ghatam, and violin. The Trinity of Carnatic music: Tyagaraja, Muthuswami Dikshitar, and Syama Sastri. Famous artists: M.S. Subbulakshmi, Semmangudi Srinivasa Iyer, L. Subramaniam.",
+                        instruments: "Key instruments: Sitar (string), Tabla (percussion), Veena (string), Mridangam (percussion), Sarod (string), Shehnai (wind), Santoor (string), Flute (wind), Sarangi (string), Ghatam (clay percussion). Each instrument has a unique construction and playing technique."
+                    },
+                    architecture: {
+                        overview: "Indian architecture spans Indus Valley Civilization structures, Buddhist stupas (Sanchi), rock-cut caves (Ajanta, Ellora), temple architecture styles (Nagara, Dravida, Vesara), Indo-Islamic architecture (Taj Mahal, Qutub Minar), and colonial influences. Modern architecture blends traditional elements with contemporary design.",
+                        ancient: "Indus Valley Civilization (2600-1900 BCE) featured well-planned cities with grid patterns, drainage systems, and public baths. Notable sites: Mohenjo-Daro, Harappa.",
+                        temple: "Hindu temple architecture has three main styles: Nagara (North India with curved shikharas), Dravida (South India with pyramidical vimanas), and Vesara (hybrid style). Jain temples feature intricate marble carvings (e.g., Dilwara Temples).",
+                        indoislamic: "Indo-Islamic architecture combines Indian and Persian elements. Features include domes, arches, minarets, and intricate jaali work. Examples: Taj Mahal, Red Fort, Gol Gumbaz, Charminar.",
+                        colonial: "Colonial architecture includes Indo-Saracenic style (blending Indian and Gothic elements), Victorian buildings, and Art Deco influences. Examples: Victoria Memorial, Chhatrapati Shivaji Terminus, Rashtrapati Bhavan.",
+                        modern: "Modern Indian architecture combines traditional elements with contemporary design. Notable architects: Charles Correa, B.V. Doshi, Raj Rewal."
+                    },
+                    visual: {
+                        overview: "Indian visual arts include ancient rock paintings, Mughal miniatures, Rajput paintings, Tanjore art, Madhubani paintings, Pattachitra, Warli art, and contemporary movements. The Bengal School of Art revolutionized Indian painting in the early 20th century.",
+                        ancient: "Prehistoric rock art at Bhimbetka (MP), Ajanta cave paintings (2nd century BCE-6th century CE) depicting Buddhist themes.",
+                        miniature: "Mughal miniatures (16th-19th centuries) combined Persian and Indian styles. Rajput paintings emerged in royal courts with themes from Hindu epics and Krishna's life.",
+                        folk: "Madhubani (Bihar) - characterized by eye-catching patterns; Warli (Maharashtra) - simple geometric shapes; Pattachitra (Odisha/West Bengal) - cloth-based scroll paintings; Tanjore (Tamil Nadu) - rich colors, gold foil; Kalamkari (Andhra Pradesh) - hand-painted or block-printed cotton textiles.",
+                        modern: "Bengal School (early 20th century) led by Abanindranath Tagore; Progressive Artists' Group (1947) including F.N. Souza, M.F. Husain; Contemporary artists: Anish Kapoor, Subodh Gupta, Bharti Kher."
+                    }
+                },
+                
+                // Philosophy and traditions
+                philosophy: {
+                    schools: "Indian philosophy includes orthodox (astika) schools: Nyaya, Vaisheshika, Samkhya, Yoga, Mimamsa, and Vedanta; and heterodox (nastika) schools: Buddhism, Jainism, and Charvaka. Each offers distinct perspectives on metaphysics, epistemology, and ethics.",
+                    vedanta: "Vedanta philosophy interprets the Upanishads and Brahma Sutras. Major subschools include Advaita (non-dualism, Adi Shankara), Vishishtadvaita (qualified non-dualism, Ramanuja), Dvaita (dualism, Madhva), and Dvaitadvaita (Nimbarka). Vedanta has significantly influenced Indian thought.",
+                    buddhism: "Buddhism, founded by Siddhartha Gautama, emphasizes the Four Noble Truths and Eightfold Path. Major schools include Theravada, Mahayana, and Vajrayana. Indian Buddhist philosophers like Nagarjuna, Asanga, and Vasubandhu made significant contributions to philosophy and logic.",
+                    jainism: "Jainism, established by Mahavira, emphasizes ahimsa (non-violence), anekantavada (multiple perspectives), and asceticism. It contributes unique concepts to Indian philosophy including syadvada (theory of conditional predication) and extensive cosmological theories."
+                },
+                
+                // Cultural practices
+                festivals: {
+                    national: "Major national festivals include Diwali (festival of lights), Holi (festival of colors), Dussehra (victory of good over evil), and Raksha Bandhan (celebrating sibling bonds). These are celebrated across India with regional variations.",
+                    regional: "Regional festivals include Pongal (Tamil Nadu), Onam (Kerala), Bihu (Assam), Puja (West Bengal), Navratri (Gujarat), Lohri (Punjab), and Ganesh Chaturthi (Maharashtra). Each has unique rituals, foods, and cultural significance.",
+                    religious: "Religious festivals include Eid (Islamic), Christmas (Christian), Guru Nanak Jayanti (Sikh), Mahavir Jayanti (Jain), and Buddha Purnima (Buddhist). India's secular tradition ensures celebration of all faiths."
+                },
+                
+                // Languages and literature - Enhanced with all 22 scheduled languages
+                languages: {
+                    overview: "India has 22 officially recognized languages and hundreds of dialects. Language families include Indo-Aryan (Hindi, Bengali, Marathi), Dravidian (Tamil, Telugu, Kannada), Austroasiatic (Santhali), and Tibeto-Burman (Bodo). Sanskrit and Tamil have the longest literary traditions.",
+                    
+                    // Detailed information about each of the 22 scheduled languages
+                    assamese: "Assamese is an Indo-Aryan language spoken primarily in Assam. It has a rich literary tradition dating back to the 14th century. Important works include the Buranjis (historical chronicles) and literature by Sankardeva and Madhavdeva. Modern Assamese literature includes works by Lakshminath Bezbaroa, Birendra Kumar Bhattacharya, and Homen Borgohain.",
+                    bengali: "Bengali (Bangla) is an Indo-Aryan language spoken in West Bengal and Bangladesh. It has a rich literary heritage with Nobel laureate Rabindranath Tagore, as well as Kazi Nazrul Islam, Bankim Chandra Chattopadhyay, and Sarat Chandra Chattopadhyay. The Bengali language movement in Bangladesh was a significant political movement.",
+                    bodo: "Bodo is a Tibeto-Burman language spoken in Assam and other Northeastern states. It's written in Devanagari script and has a growing body of literature including folk tales, poetry, and modern writings. The Bodo language has official status in Assam.",
+                    dogri: "Dogri is an Indo-Aryan language spoken mainly in Jammu region. Originally written in Dogra Akkhar script, it now uses Devanagari. It has a rich tradition of folk literature including songs, proverbs, and folktales. Modern Dogri literature includes works by Padma Sachdev and Dinu Bhai Pant.",
+                    gujarati: "Gujarati is an Indo-Aryan language spoken in Gujarat. Its literature dates to the 12th century, with significant contributions from Jain scholars and Bhakti movement poets like Narsinh Mehta. Modern writers include Mohandas Gandhi, Umashankar Joshi, and Pannalal Patel.",
+                    hindi: "Hindi is an Indo-Aryan language and one of India's official languages. Modern Standard Hindi is based on the Khariboli dialect. Hindi literature spans from the medieval Bhakti poetry of Kabir and Tulsidas to modern works by Premchand, Mahadevi Verma, and Harivansh Rai Bachchan. It's written in Devanagari script.",
+                    kannada: "Kannada is a Dravidian language spoken in Karnataka. It has a 1500-year literary history, with the earliest available work being Kavirajamarga from the 9th century. Medieval works include Vachana literature by Basavanna. Modern Kannada literature includes works by Kuvempu, U.R. Ananthamurthy, and Girish Karnad.",
+                    kashmiri: "Kashmiri is a Dardic language spoken in Jammu and Kashmir. It has a rich poetic tradition including the works of Lal Ded, Habba Khatoon, and Rasul Mir. Modern Kashmiri literature includes works by Mahjoor, Abdul Ahad Azad, and Rahman Rahi.",
+                    konkani: "Konkani is an Indo-Aryan language spoken along the western coast of India. It's written in multiple scripts including Devanagari, Roman, Kannada, and Malayalam. Its literature includes medieval Bhakti poetry and modern works by Shenoi Goembab, Ravindra Kelekar, and Chandrakant Keni.",
+                    maithili: "Maithili is an Indo-Aryan language spoken in Bihar and Nepal. It has a rich literary history dating to the 14th century with Vidyapati's love poetry. Modern Maithili literature includes works by Hari Mohan Jha, Rajkamal Choudhary, and Udaya Narayana Singh.",
+                    malayalam: "Malayalam is a Dravidian language spoken in Kerala. Its literature dates to the 13th century with Ramacharitam. The 19th century saw major developments with works by Thunchaththu Ezhuthachan. Modern Malayalam literature includes works by Thakazhi Sivasankara Pillai, Vaikom Muhammad Basheer, and M.T. Vasudevan Nair.",
+                    manipuri: "Manipuri (Meiteilon) is a Sino-Tibetan language spoken in Manipur. It has a long literary tradition with ancient texts like Puya. Modern literature includes works by Bhabani Charan Mukherjee, Lamabam Kamal, and R.K. Madhubir. It's written in Bengali script and recently revived Meitei Mayek script.",
+                    marathi: "Marathi is an Indo-Aryan language spoken in Maharashtra. Its literature dates to the 13th century with Jñāneśvar's commentary on the Bhagavad Gita. The Bhakti movement produced saints like Tukaram and Eknath. Modern Marathi literature includes works by P.L. Deshpande, Vishnu Sakharam Khandekar, and Durga Bhagwat.",
+                    nepali: "Nepali is an Indo-Aryan language spoken in Sikkim and parts of West Bengal and Northeast India. Its literature includes works by Bhanubhakta Acharya (Ramayana translation), Lekhnath Paudyal, and Parijat. Modern Nepali literature continues to flourish in India and Nepal.",
+                    oriya: "Odia (Oriya) is an Indo-Aryan language spoken in Odisha. Its literature dates to the 10th century with Sarala Das's Mahabharata translation. Medieval Bhakti poetry includes works by Jayadeva (Gita Govinda). Modern Odia literature includes works by Fakir Mohan Senapati, Gopinath Mohanty, and Sitakant Mohapatra.",
+                    punjabi: "Punjabi is an Indo-Aryan language spoken in Punjab. It has a rich literary tradition including the Sikh Gurus' writings in Guru Granth Sahib, Waris Shah's Heer Ranjha, and Bulleh Shah's Sufi poetry. Modern Punjabi literature includes works by Amrita Pritam, Shiv Kumar Batalvi, and Nanak Singh.",
+                    sanskrit: "Sanskrit is an Indo-Aryan language and the primary liturgical language of Hinduism. It has an extensive literature spanning over 3,000 years, including the Vedas, Upanishads, epics (Mahabharata, Ramayana), classical poetry and drama (Kalidasa), and philosophical texts. Modern Sanskrit literature continues to be produced.",
+                    santali: "Santali is an Austroasiatic language spoken by the Santal people. It has a rich oral tradition including folk tales and songs. The Ol Chiki script was developed in the 20th century. Modern Santali literature includes works by Raghunath Murmu and Narayan Soren.",
+                    sindhi: "Sindhi is an Indo-Aryan language spoken by Sindhi communities across India. It has a rich literary tradition with Sufi poetry by Shah Abdul Latif Bhittai (Shah Jo Risalo). Modern Sindhi literature includes works by Mirza Kalich Beg, Lekhraj Aziz, and Popati Hiranandani.",
+                    tamil: "Tamil is a Dravidian language with a 2000-year literary history. Sangam literature (300 BCE-300 CE) includes poetic anthologies like Purananuru and Akananuru. Medieval literature includes devotional works and the epic Silappatikaram. Modern Tamil literature includes works by Subramania Bharati, Kalki Krishnamurthy, and Sundara Ramaswamy.",
+                    telugu: "Telugu is a Dravidian language spoken in Andhra Pradesh and Telangana. Its literature dates to the 11th century with Nannaya's Mahabharata translation. Medieval poets include Potana, Vemana, and Annamacharya. Modern Telugu literature includes works by Gurazada Apparao, Viswanatha Satyanarayana, and C. Narayana Reddy.",
+                    urdu: "Urdu is an Indo-Aryan language with significant Persian influence. It developed in medieval India and is written in Perso-Arabic script. Its poetry includes ghazals by Mir Taqi Mir and Ghalib. Modern Urdu literature includes works by Premchand, Saadat Hasan Manto, and Ismat Chughtai."
+                },
+                
+                // Regional diversity
+                regions: {
+                    north: "North India includes states like Uttar Pradesh, Punjab, Rajasthan, and Himachal Pradesh. Cultural elements include Mughlai cuisine, Hindustani classical music, Kathak dance, Phulkari embroidery, and festivals like Lohri and Chhath Puja.",
+                    south: "South India includes states like Tamil Nadu, Kerala, Karnataka, and Andhra Pradesh. Cultural elements include Carnatic music, Bharatanatyam/Kathakali dance, silk sarees, temple architecture, and festivals like Pongal and Onam.",
+                    east: "East India includes states like West Bengal, Odisha, Bihar, and Jharkhand. Cultural elements include Rabindra Sangeet, Pattachitra art, Durga Puja, Rasgulla sweets, and traditional crafts like Madhubani painting.",
+                    west: "West India includes states like Maharashtra, Gujarat, and Goa. Cultural elements include Garba dance, Warli art, Bollywood cinema, Vada Pav cuisine, and festivals like Ganesh Chaturthi and Navratri.",
+                    northeast: "Northeast India includes states like Assam, Manipur, Nagaland, and Meghalaya. Cultural elements include Bihu dance, Thangka painting, bamboo crafts, hornbill festival, and diverse tribal traditions."
+                },
+                
+                // Default response
+                default: "I specialize in Indian cultural heritage. Could you please ask about literature, arts, philosophy, languages, festivals, or regional cultures? For example, you could ask about Sanskrit literature, classical dance forms, or Indian festivals."
+            };
+            
+            // Function to get bot response
+            function getBotResponse(userMessage) {
+                const lowerCaseMessage = userMessage.toLowerCase();
+                
+                // Check for greetings
+                if (lowerCaseMessage.includes('hello') || lowerCaseMessage.includes('hi') || 
+                    lowerCaseMessage.includes('namaste') || lowerCaseMessage.includes('hey')) {
+                    return knowledgeBase.greeting[Math.floor(Math.random() * knowledgeBase.greeting.length)];
+                }
+                
+                // Check for literature queries
+                if (lowerCaseMessage.includes('literature')) {
+                    if (lowerCaseMessage.includes('sanskrit')) {
+                        return knowledgeBase.literature.sanskrit;
+                    } else if (lowerCaseMessage.includes('tamil')) {
+                        return knowledgeBase.literature.tamil;
+                    } else if (lowerCaseMessage.includes('hindi')) {
+                        return knowledgeBase.literature.hindi;
+                    } else if (lowerCaseMessage.includes('bengali')) {
+                        return knowledgeBase.literature.bengali;
+                    } else {
+                        return knowledgeBase.literature.regional;
+                    }
+                }
+                
+                // Check for arts queries
+                if (lowerCaseMessage.includes('art') || lowerCaseMessage.includes('dance') || 
+                    lowerCaseMessage.includes('music') || lowerCaseMessage.includes('architecture')) {
+                    
+                    if (lowerCaseMessage.includes('dance')) {
+                        if (lowerCaseMessage.includes('bharatanatyam')) {
+                            return knowledgeBase.arts.dance.bharatanatyam;
+                        } else if (lowerCaseMessage.includes('kathak')) {
+                            return knowledgeBase.arts.dance.kathak;
+                        } else if (lowerCaseMessage.includes('kathakali')) {
+                            return knowledgeBase.arts.dance.kathakali;
+                        } else if (lowerCaseMessage.includes('kuchipudi')) {
+                            return knowledgeBase.arts.dance.kuchipudi;
+                        } else if (lowerCaseMessage.includes('odissi')) {
+                            return knowledgeBase.arts.dance.odissi;
+                        } else if (lowerCaseMessage.includes('manipuri')) {
+                            return knowledgeBase.arts.dance.manipuri;
+                        } else if (lowerCaseMessage.includes('mohiniyattam')) {
+                            return knowledgeBase.arts.dance.mohiniyattam;
+                        } else if (lowerCaseMessage.includes('sattriya')) {
+                            return knowledgeBase.arts.dance.sattriya;
+                        } else {
+                            return knowledgeBase.arts.dance.overview;
+                        }
+                    } else if (lowerCaseMessage.includes('music')) {
+                        if (lowerCaseMessage.includes('hindustani')) {
+                            return knowledgeBase.arts.music.hindustani;
+                        } else if (lowerCaseMessage.includes('carnatic')) {
+                            return knowledgeBase.arts.music.carnatic;
+                        } else if (lowerCaseMessage.includes('instrument')) {
+                            return knowledgeBase.arts.music.instruments;
+                        } else {
+                            return knowledgeBase.arts.music.overview;
+                        }
+                    } else if (lowerCaseMessage.includes('architect')) {
+                        return knowledgeBase.arts.architecture.overview;
+                    } else if (lowerCaseMessage.includes('visual') || lowerCaseMessage.includes('paint')) {
+                        return knowledgeBase.arts.visual.overview;
+                    } else {
+                        return "Indian arts encompass diverse forms including classical dances, music traditions, architectural styles, and visual arts. Could you specify which aspect you're interested in?";
+                    }
+                }
+                
+                // Check for philosophy queries
+                if (lowerCaseMessage.includes('philosophy')) {
+                    if (lowerCaseMessage.includes('vedanta')) {
+                        return knowledgeBase.philosophy.vedanta;
+                    } else if (lowerCaseMessage.includes('buddhis')) {
+                        return knowledgeBase.philosophy.buddhism;
+                    } else if (lowerCaseMessage.includes('jain')) {
+                        return knowledgeBase.philosophy.jainism;
+                    } else {
+                        return knowledgeBase.philosophy.schools;
+                    }
+                }
+                
+                // Check for festival queries
+                if (lowerCaseMessage.includes('festival')) {
+                    return knowledgeBase.festivals.national + " " + knowledgeBase.festivals.regional;
+                }
+                
+                // Check for language queries
+                if (lowerCaseMessage.includes('language')) {
+                    if (lowerCaseMessage.includes('hindi')) {
+                        return knowledgeBase.languages.hindi;
+                    } else if (lowerCaseMessage.includes('tamil')) {
+                        return knowledgeBase.languages.tamil;
+                    } else if (lowerCaseMessage.includes('sanskrit')) {
+                        return knowledgeBase.languages.sanskrit;
+                    } else if (lowerCaseMessage.includes('bengali')) {
+                        return knowledgeBase.languages.bengali;
+                    } else if (lowerCaseMessage.includes('telugu')) {
+                        return knowledgeBase.languages.telugu;
+                    } else if (lowerCaseMessage.includes('marathi')) {
+                        return knowledgeBase.languages.marathi;
+                    } else if (lowerCaseMessage.includes('urdu')) {
+                        return knowledgeBase.languages.urdu;
+                    } else if (lowerCaseMessage.includes('gujarati')) {
+                        return knowledgeBase.languages.gujarati;
+                    } else if (lowerCaseMessage.includes('punjabi')) {
+                        return knowledgeBase.languages.punjabi;
+                    } else if (lowerCaseMessage.includes('malayalam')) {
+                        return knowledgeBase.languages.malayalam;
+                    } else if (lowerCaseMessage.includes('kannada')) {
+                        return knowledgeBase.languages.kannada;
+                    } else if (lowerCaseMessage.includes('oriya') || lowerCaseMessage.includes('odia')) {
+                        return knowledgeBase.languages.oriya;
+                    } else if (lowerCaseMessage.includes('assamese')) {
+                        return knowledgeBase.languages.assamese;
+                    } else {
+                        return knowledgeBase.languages.overview;
+                    }
+                }
+                
+                // Check for regional culture queries
+                if (lowerCaseMessage.includes('north') || lowerCaseMessage.includes('south') || 
+                    lowerCaseMessage.includes('east') || lowerCaseMessage.includes('west') || 
+                    lowerCaseMessage.includes('northeast') || lowerCaseMessage.includes('region')) {
+                    
+                    if (lowerCaseMessage.includes('north')) {
+                        return knowledgeBase.regions.north;
+                    } else if (lowerCaseMessage.includes('south')) {
+                        return knowledgeBase.regions.south;
+                    } else if (lowerCaseMessage.includes('east')) {
+                        return knowledgeBase.regions.east;
+                    } else if (lowerCaseMessage.includes('west')) {
+                        return knowledgeBase.regions.west;
+                    } else if (lowerCaseMessage.includes('northeast')) {
+                        return knowledgeBase.regions.northeast;
+                    } else {
+                        return "India has diverse regional cultures. The main regions are North, South, East, West, and Northeast India. Each has unique traditions, languages, cuisines, and art forms. Would you like to know about a specific region?";
+                    }
+                }
+                
+                // Check for specific author queries
+                if (lowerCaseMessage.includes('thakazhi')) {
+                    return "Thakazhi Sivasankara Pillai (1912-1999) was a renowned Malayalam author from Kerala. His most famous work is 'Chemmeen' (Shrimps), which received the Sahitya Akademi Award in 1957 and later became an award-winning film. His writing often focused on the lives of ordinary people, especially the fishing community and agricultural laborers. Other notable works include 'Kayar' (Coir) and 'Randidangazhi' (Two Measures). He was awarded India's highest literary honor, the Jnanpith Award, in 1984.";
+                }
+                
+                if (lowerCaseMessage.includes('basheer')) {
+                    return "Vaikom Muhammad Basheer (1908-1994) was a renowned Malayalam writer and independence activist from Kerala. Known as 'Beypore Sultan', he was known for his simple, direct style and humorous storytelling. His works often focused on Muslim community life and contemporary social issues. Famous works include 'Balyakalasakhi' (Childhood Friend), 'Pathummayude Aadu' (Pathumma's Goat), and 'Mathilukal' (Walls). He received India's highest literary honor, the Padma Shri, in 1982.";
+                }
+                
+                // Default response
+                return knowledgeBase.default;
+            }
+            
+            // Function to add message to chat
+            function addMessage(message, isUser) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message');
+                messageDiv.classList.add(isUser ? 'user-message' : 'bot-message');
+                
+                const headerDiv = document.createElement('div');
+                headerDiv.classList.add('message-header');
+                headerDiv.innerHTML = isUser ? '<i class="fas fa-user"></i> You' : '<i class="fas fa-robot"></i> Cultural Expert';
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.textContent = message;
+                
+                messageDiv.appendChild(headerDiv);
+                messageDiv.appendChild(contentDiv);
+                
+                chatMessages.appendChild(messageDiv);
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // Function to show typing indicator
+            function showTypingIndicator() {
+                typingIndicator.style.display = 'block';
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // Function to hide typing indicator
+            function hideTypingIndicator() {
+                typingIndicator.style.display = 'none';
+            }
+            
+            // Function to handle sending message
+            function handleSendMessage() {
+                const message = userInput.value.trim();
+                
+                if (message) {
+                    // Add user message
+                    addMessage(message, true);
+                    
+                    // Clear input
+                    userInput.value = '';
+                    
+                    // Show typing indicator
+                    showTypingIndicator();
+                    
+                    // Get bot response after a short delay
+                    setTimeout(() => {
+                        hideTypingIndicator();
+                        const botResponse = getBotResponse(message);
+                        addMessage(botResponse, false);
+                    }, 1000);
+                }
+            }
+            
+            // Event listeners
+            sendButton.addEventListener('click', handleSendMessage);
+            
+            userInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    handleSendMessage();
+                }
+            });
+            
+            // Add event listeners to suggestions
+            suggestions.forEach(suggestion => {
+                suggestion.addEventListener('click', () => {
+                    userInput.value = suggestion.getAttribute('data-query');
+                    handleSendMessage();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
